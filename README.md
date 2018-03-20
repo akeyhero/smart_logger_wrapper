@@ -92,7 +92,7 @@ logger.with_position.with_position(false).info 'A message'
 
 #### #append\_backtrace
 
-With `append_backtrace`, the logger adjoins a backtrace to the messages so that you can inspect, for instance, where an method is called.
+With `append_backtrace`, the logger adjoins its caller's backtrace.
 
 ```ruby
 logger.append_backtrace.info 'A message'

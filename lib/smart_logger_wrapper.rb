@@ -22,7 +22,7 @@ class SmartLoggerWrapper
   end
 
   def log(severity, *args, &block)
-    _log(severity, *args, &blank)
+    _log(severity, *args, &block)
   end
   alias add log
 
@@ -69,10 +69,12 @@ class SmartLoggerWrapper
 
   def method_missing(method_name, *args, &block)
     if Options.defined_option?(method_name)
+      # if there is an defined option with the same name as the method name, return a new logger with the option.
       new_logger = self.class.new(logger, **options.merge(method_name => args.first))
       return block.(new_logger) if block_given?
       new_logger
     else
+      # otherwise, call the method of the warpped logger.
       logger.public_send(method_name, *args, &block)
     end
   end
