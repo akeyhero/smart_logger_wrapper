@@ -20,6 +20,17 @@ Or install it yourself as:
 
     $ gem install smart_logger_wrapper
 
+### For Ruby on Rails
+
+Wrap your logger with `SmartLoggerWrapper`, for example:
+
+```diff
+-  config.logger = Logger.new('log/production.log', 'daily')
++  config.logger = SmartLoggerWrapper(Logger.new('log/production.log', 'daily')).with_position
+```
+
+Note that it is strongly recommended to use the wrapper for all environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
+
 ## Usage
 
 ### Basic
@@ -66,9 +77,9 @@ You can chain options to the logger instance to modify logging messages.
 logger.with_position.to(STDERR).info 'A message'
 
 # You can use blocks to log several times with the same options.
-logger.with_position do |logger_with_pos|
-  logger_with_pos.info 'A message'
-  logger_with_pos.append_backtrace.error 'An error'
+logger.with_position do |pos_logger|
+  pos_logger.info 'A message'
+  pos_logger.append_backtrace.error 'An error'
 end
 ```
 
@@ -103,15 +114,9 @@ logger.append_backtrace.info 'A message'
 # => path/to/code.rb:6:in `foo'
 # => path/to/code.rb:2:in `bar'
 
-# You can specify the length of the backtrace
+# You can specify the length of the backtrace to log
 logger.append_backtrace(2).info 'A message'
 ```
-
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
