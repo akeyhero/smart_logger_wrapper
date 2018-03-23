@@ -34,9 +34,10 @@ Note that it is strongly recommended to use the wrapper for all environments so 
 You may want to put log messages to `STDOUT` in your development environment. Then:
 
 ```ruby
-  logger = ActiveSupport::Logger.new("log/development.log")
-  logger.extend ActiveSupport::Logger.broadcast(ActiveSupport::Logger.new(STDOUT))
-  config.logger = SmartLoggerWrapper.new(logger)
+  config.logger = SmartLoggerWrapper.new(
+    SmartLoggerWrapper.new(Logger.new("log/development.log")).with_position,
+    ActiveSupport::Logger.new(STDOUT)
+  )
 ```
 
 ## Usage
@@ -52,9 +53,12 @@ require 'smart_logger_wrapper'
 logger = SmartLoggerWrapper.new(Logger.new('log/development.log'))
 
 logger.info 'Call logging methods as usual.'
+
+# You can wrap multiple loggers
+logger2 = SmartLoggerWrapper.new(Logger.new('log/development.log'), Logger.new(STDOUT))
 ```
 
-The compatibles must respond to `#log` with the same arguments as `Logger#log`.
+The compatibles must respond to `#add` with the same arguments as `Logger#add`.
 
 ### Feature 1: Integrate multiple logger calls
 
