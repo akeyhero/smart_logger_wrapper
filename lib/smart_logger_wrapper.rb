@@ -21,21 +21,21 @@ class SmartLoggerWrapper
     @options = options
   end
 
-  def log(severity, *args, &block)
-    _log(severity, *args, &block)
+  def add(severity, *args, &block)
+    _add(severity, *args, &block)
   end
-  alias add log
+  alias log add
 
   SEVERITY_MAPPING.each do |severity_name, severity|
     define_method(severity_name) do |*args, &block|
-      _log(severity, *args, &block)
+      _add(severity, *args, &block)
     end
   end
 
   private
 
   # All methods calling this must have the synchronized call stack depth so that this can show neat positions and backtraces
-  def _log(severity, *args, &block)
+  def _add(severity, *args, &block)
     messages = args.map { |arg| to_message(arg) }
     messages << to_message(block.call) if block_given?
     begin
@@ -49,7 +49,7 @@ class SmartLoggerWrapper
       false
     end.tap do |succeeded|
       messages.each do |message|
-        logger.log(severity, nil, message)
+        logger.add(severity, nil, message)
       end
     end
   end

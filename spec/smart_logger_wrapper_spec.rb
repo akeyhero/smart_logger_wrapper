@@ -7,16 +7,16 @@ RSpec.describe SmartLoggerWrapper do
   let(:severity_stub) { double(:severity) }
 
   before do
-    allow(logger_stub).to receive(:log)
+    allow(logger_stub).to receive(:add)
   end
 
   it 'has a version number' do
     expect(SmartLoggerWrapper::VERSION).not_to be nil
   end
 
-  describe '#add' do
-    it 'is an alias of #log' do
-      expect(smart_logger_wrapper.method(:add)).to eq smart_logger_wrapper.method(:log)
+  describe '#log' do
+    it 'is an alias of #add' do
+      expect(smart_logger_wrapper.method(:log)).to eq smart_logger_wrapper.method(:add)
     end
   end
 
@@ -29,64 +29,64 @@ RSpec.describe SmartLoggerWrapper do
     let(:block_message_stub) { double(:block_message, inspect: inspected_block_message_stub) }
     let(:inspected_block_message_stub) { double(:inspected_block_message) }
 
-    describe '#log' do
-      subject! { smart_logger_wrapper.log(severity_stub, message1_stub, message2_stub, &block_stub) }
+    describe '#add' do
+      subject! { smart_logger_wrapper.add(severity_stub, message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(severity_stub, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(severity_stub, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(severity_stub, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(severity_stub, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(severity_stub, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(severity_stub, nil, inspected_block_message_stub).once }
     end
 
     describe '#debug' do
       subject! { smart_logger_wrapper.debug(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::DEBUG, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::DEBUG, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::DEBUG, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::DEBUG, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::DEBUG, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::DEBUG, nil, inspected_block_message_stub).once }
     end
 
     describe '#info' do
       subject! { smart_logger_wrapper.info(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::INFO, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::INFO, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::INFO, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::INFO, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::INFO, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::INFO, nil, inspected_block_message_stub).once }
     end
 
     describe '#warn' do
       subject! { smart_logger_wrapper.warn(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::WARN, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::WARN, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::WARN, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::WARN, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::WARN, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::WARN, nil, inspected_block_message_stub).once }
     end
 
     describe '#error' do
       subject! { smart_logger_wrapper.error(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::ERROR, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::ERROR, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::ERROR, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::ERROR, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::ERROR, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::ERROR, nil, inspected_block_message_stub).once }
     end
 
     describe '#fatal' do
       subject! { smart_logger_wrapper.fatal(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::FATAL, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::FATAL, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::FATAL, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::FATAL, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::FATAL, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::FATAL, nil, inspected_block_message_stub).once }
     end
 
     describe '#unknown' do
       subject! { smart_logger_wrapper.unknown(message1_stub, message2_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:log).with(Logger::UNKNOWN, nil, inspected_message1_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::UNKNOWN, nil, inspected_message2_stub).once }
-      it { expect(logger_stub).to have_received(:log).with(Logger::UNKNOWN, nil, inspected_block_message_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::UNKNOWN, nil, inspected_message1_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::UNKNOWN, nil, inspected_message2_stub).once }
+      it { expect(logger_stub).to have_received(:add).with(Logger::UNKNOWN, nil, inspected_block_message_stub).once }
     end
   end
 
-  describe '#log' do
+  describe '#add' do
     let(:message_stub) { double(:message, inspect: inspected_message_stub, backtrace: backtrace_stub) }
     let(:inspected_message_stub) { double(:inspected_message) }
     let(:backtrace_stub) { double(:backtrace) }
@@ -100,13 +100,13 @@ RSpec.describe SmartLoggerWrapper do
       allow(SmartLoggerWrapper::Utils::Backtrace).to receive(:clean_backtrace).with(backtrace_stub).and_return(cleaned_backtrace_stub)
     end
 
-    subject! { smart_logger_wrapper.log(severity_stub, message_stub) }
+    subject! { smart_logger_wrapper.add(severity_stub, message_stub) }
 
     context 'with a string message' do
       let(:is_message_string) { true }
 
       it 'logs the message as it is' do
-        expect(logger_stub).to have_received(:log).with(severity_stub, nil, message_stub)
+        expect(logger_stub).to have_received(:add).with(severity_stub, nil, message_stub)
       end
     end
 
@@ -115,13 +115,13 @@ RSpec.describe SmartLoggerWrapper do
 
       it 'logs the inspected message with its backtrace' do
         expected = ([inspected_message_stub] + cleaned_backtrace_stub).join("\n")
-        expect(logger_stub).to have_received(:log).with(severity_stub, nil, expected)
+        expect(logger_stub).to have_received(:add).with(severity_stub, nil, expected)
       end
     end
 
     context 'with neither a string message nor an exception' do
       it 'logs the message after inspected' do
-        expect(logger_stub).to have_received(:log).with(severity_stub, nil, inspected_message_stub)
+        expect(logger_stub).to have_received(:add).with(severity_stub, nil, inspected_message_stub)
       end
     end
   end

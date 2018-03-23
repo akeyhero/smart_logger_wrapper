@@ -11,7 +11,7 @@ RSpec.describe SmartLoggerWrapper::Options::To do
   let(:message2) { ('a'..'z').to_a.sample(10).join }
 
   before do
-    allow(logger_stub).to receive(:log)
+    allow(logger_stub).to receive(:add)
     allow(logger_stub).to receive(:error)
     allow(handler_stub).to receive(:puts)
   end
@@ -32,7 +32,7 @@ RSpec.describe SmartLoggerWrapper::Options::To do
     end
 
     it 'logs the original messages' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, message1).once
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, message1).once
     end
   end
 end

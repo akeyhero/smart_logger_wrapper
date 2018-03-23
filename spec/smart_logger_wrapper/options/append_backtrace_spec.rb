@@ -14,7 +14,7 @@ RSpec.describe SmartLoggerWrapper::Options::AppendBacktrace do
 
 
   before do
-    allow(logger_stub).to receive(:log)
+    allow(logger_stub).to receive(:add)
   end
 
   def get_caller_line
@@ -29,11 +29,11 @@ RSpec.describe SmartLoggerWrapper::Options::AppendBacktrace do
     subject! { smart_logger_wrapper.append_backtrace.log(severity_stub, message) }
 
     it 'logs with the backtrace' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, ['BACKTRACE:', *backtrace].join("\n"))
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, ['BACKTRACE:', *backtrace].join("\n"))
     end
 
     it 'logs with the original message' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, include(message))
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, include(message))
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe SmartLoggerWrapper::Options::AppendBacktrace do
 
       it 'logs with the original message' do
         subject
-        expect(logger_stub).to have_received(:log).with(severity_stub, nil, include(message))
+        expect(logger_stub).to have_received(:add).with(severity_stub, nil, include(message))
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe SmartLoggerWrapper::Options::AppendBacktrace do
       subject! { smart_logger_wrapper.append_backtrace(1).log(severity_stub, message) }
 
       it "logs with the caller's file name" do
-        expect(logger_stub).to have_received(:log).with(severity_stub, nil, include("#{filename}:#{linenumber}"))
+        expect(logger_stub).to have_received(:add).with(severity_stub, nil, include("#{filename}:#{linenumber}"))
       end
     end
   end
@@ -75,7 +75,7 @@ RSpec.describe SmartLoggerWrapper::Options::AppendBacktrace do
     subject! { smart_logger_wrapper.append_backtrace(false).log(severity_stub, message) }
 
     it 'logs just the original message' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, message)
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, message)
     end
   end
 end
