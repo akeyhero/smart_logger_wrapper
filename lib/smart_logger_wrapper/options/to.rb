@@ -4,7 +4,7 @@ class SmartLoggerWrapper
   module Options
     class To < Base
       def apply!(messages, value)
-        return if value == nil
+        raise ApplicationError, 'No handler given' if value == nil
         value.puts messages.join("\n")
       rescue NoMethodError => e
         raise ApplicationError, e.message

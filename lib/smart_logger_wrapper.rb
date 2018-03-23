@@ -38,17 +38,20 @@ class SmartLoggerWrapper
   def _log(severity, *args, &block)
     messages = args.map { |arg| to_message(arg) }
     messages << to_message(block.call) if block_given?
-    Options.apply_all!(messages, options)
-    messages.each do |message|
-      logger.log(severity, nil, message)
+    begin
+      Options.apply_all!(messages, options)
+      true
+    rescue Options::ApplicationError => e
+      logger.error(<<~EOM)
+        Failed to apply options: #{e.inspect}
+        #{e.backtrace.join("\n")}
+      EOM
+      false
+    end.tap do |succeeded|
+      messages.each do |message|
+        logger.log(severity, nil, message)
+      end
     end
-    true
-  rescue Options::ApplicationError => e
-    logger.error(<<~EOM)
-      #{e.inspect}
-      #{e.backtrace.join("\n")}
-    EOM
-    false
   end
 
   def to_message(object)
