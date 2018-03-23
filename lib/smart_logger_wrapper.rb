@@ -73,15 +73,16 @@ class SmartLoggerWrapper
 
   def method_missing(method_name, *args, &block)
     if Options.defined_option?(method_name)
-      # if there is an defined option with the same name as the method name, return a new logger with the option.
+      # If there is an defined option with the same name as the method name, return a new logger with the option.
       new_logger = self.class.new(*loggers, **options.merge(method_name => args.first))
       return block.(new_logger) if block_given?
       new_logger
     else
-      # otherwise, call the method of the warpped logger.
-      loggers.each do |logger|
+      # Otherwise, call the method of the warpped logger.
+      # The reutrn value is that of the first one.
+      loggers.map do |logger|
         logger.public_send(method_name, *args, &block)
-      end
+      end.first
     end
   end
 end
