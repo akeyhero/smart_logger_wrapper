@@ -14,10 +14,10 @@ class SmartLoggerWrapper
     unknown: UNKNOWN
   }.freeze
 
-  attr_reader :logger, :options
+  attr_reader :loggers, :options
 
-  def initialize(logger = Logger.new(STDOUT), **options)
-    @logger = logger
+  def initialize(logger = Logger.new(STDOUT), *loggers, **options)
+    @loggers = [logger, *loggers]
     @options = options
   end
 
@@ -42,14 +42,18 @@ class SmartLoggerWrapper
       Options.apply_all!(messages, options)
       true
     rescue Options::ApplicationError => e
-      logger.error(<<~EOM)
-        Failed to apply options: #{e.inspect}
-        #{e.backtrace.join("\n")}
-      EOM
+      loggers.each do |logger|
+        logger.error(<<~EOM)
+          Failed to apply options: #{e.inspect}
+          #{e.backtrace.join("\n")}
+        EOM
+      end
       false
     end.tap do |succeeded|
       messages.each do |message|
-        logger.add(severity, nil, message)
+        loggers.each do |logger|
+          logger.add(severity, nil, message)
+        end
       end
     end
   end
@@ -70,12 +74,14 @@ class SmartLoggerWrapper
   def method_missing(method_name, *args, &block)
     if Options.defined_option?(method_name)
       # if there is an defined option with the same name as the method name, return a new logger with the option.
-      new_logger = self.class.new(logger, **options.merge(method_name => args.first))
+      new_logger = self.class.new(*loggers, **options.merge(method_name => args.first))
       return block.(new_logger) if block_given?
       new_logger
     else
       # otherwise, call the method of the warpped logger.
-      logger.public_send(method_name, *args, &block)
+      loggers.each do |logger|
+        logger.public_send(method_name, *args, &block)
+      end
     end
   end
 end
