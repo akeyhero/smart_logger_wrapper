@@ -31,9 +31,9 @@ Wrap your logger with `SmartLoggerWrapper`, for example, in `config/environments
 
 Note that it is strongly recommended to use the wrapper for all environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
 
-You may want to put log messages to STDOUT in the development environment. Then:
+You may want to put log messages to `STDOUT` in your development environment. Then:
 
-```
+```ruby
   logger = ActiveSupport::Logger.new("log/development.log")
   logger.extend ActiveSupport::Logger.broadcast(ActiveSupport::Logger.new(STDOUT))
   config.logger = SmartLoggerWrapper.new(logger)
