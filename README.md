@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ### For Ruby on Rails
 
-Wrap your logger with `SmartLoggerWrapper`, for example:
+Wrap your logger with `SmartLoggerWrapper`, for example, in `config/environments/production.rb`:
 
 ```diff
 -  config.logger = Logger.new('log/production.log', 'daily')
@@ -30,6 +30,14 @@ Wrap your logger with `SmartLoggerWrapper`, for example:
 ```
 
 Note that it is strongly recommended to use the wrapper for all environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
+
+You may want to put log messages to STDOUT in the development environment. Then:
+
+```
+  logger = ActiveSupport::Logger.new("log/development.log")
+  logger.extend ActiveSupport::Logger.broadcast(ActiveSupport::Logger.new(STDOUT))
+  config.logger = SmartLoggerWrapper.new(logger)
+```
 
 ## Usage
 
