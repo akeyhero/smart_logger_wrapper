@@ -126,7 +126,7 @@ RSpec.describe SmartLoggerWrapper do
     end
   end
 
-  context 'initialize with multiple loggers' do
+  context 'initialized with multiple loggers' do
     let(:smart_logger_wrapper) { SmartLoggerWrapper.new(logger_stub, another_logger_stub) }
     let(:another_logger_stub) { double(:another_logger) }
     let(:message_stub) { double(:message, inspect: inspected_message_stub) }
@@ -183,6 +183,28 @@ RSpec.describe SmartLoggerWrapper do
 
       it { expect(logger_stub).to have_received(:add).with(Logger::UNKNOWN, nil, inspected_message_stub).once }
       it { expect(another_logger_stub).to have_received(:add).with(Logger::UNKNOWN, nil, inspected_message_stub).once }
+    end
+
+    describe '#method_missing' do
+      let(:method_name) { ('a'..'z').to_a.sample(10).join }
+      let(:return_value_stub) { double(:return_value) }
+      let(:another_return_value_stub) { double(:another_return_value) }
+
+      before do
+        allow(logger_stub).to receive(method_name).and_return(return_value_stub)
+        allow(another_logger_stub).to receive(method_name).and_return(another_return_value_stub)
+      end
+
+      subject! { smart_logger_wrapper.public_send(method_name) }
+
+      it 'calls the methods with the same name for all loggers' do
+        expect(logger_stub).to have_received(method_name).once
+        expect(another_logger_stub).to have_received(method_name).once
+      end
+
+      it 'returns the return value of the first logger' do
+        is_expected.to be return_value_stub
+      end
     end
   end
 end
