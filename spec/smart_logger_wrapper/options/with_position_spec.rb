@@ -10,7 +10,7 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
   let(:filename) { File.basename(__FILE__) }
 
   before do
-    allow(logger_stub).to receive(:log)
+    allow(logger_stub).to receive(:add)
   end
 
   def get_caller_line
@@ -23,11 +23,11 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
     subject! { smart_logger_wrapper.with_position.log(severity_stub, message) }
 
     it "logs with the caller's file name" do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, include("#{filename}:#{linenumber}"))
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, include("#{filename}:#{linenumber}"))
     end
 
     it 'logs with the original message' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, include(message))
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, include(message))
     end
   end
 
@@ -35,7 +35,7 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
     subject! { smart_logger_wrapper.append_backtrace(false).log(severity_stub, message) }
 
     it 'logs just the original message' do
-      expect(logger_stub).to have_received(:log).with(severity_stub, nil, message)
+      expect(logger_stub).to have_received(:add).with(severity_stub, nil, message)
     end
   end
 end
