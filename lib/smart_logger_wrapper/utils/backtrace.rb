@@ -1,6 +1,7 @@
+require 'logger'
 require 'smart_logger_wrapper/utils/path'
 
-class SmartLoggerWrapper
+class SmartLoggerWrapper < Logger
   module Utils
     module Backtrace
       module_function

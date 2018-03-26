@@ -1,9 +1,10 @@
+require 'logger'
 require 'smart_logger_wrapper/options/base'
 
-class SmartLoggerWrapper
+class SmartLoggerWrapper < Logger
   module Options
     class To < Base
-      def apply!(messages, value)
+      def apply!(messages, value, logger)
         raise ApplicationError, 'No handler given' if value == nil
         value.puts messages.join("\n")
       rescue NoMethodError => e
