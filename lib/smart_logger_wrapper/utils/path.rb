@@ -1,4 +1,6 @@
-class SmartLoggerWrapper
+require 'logger'
+
+class SmartLoggerWrapper < Logger
   module Utils
     module Path
       DIR_TRIMMER_PATTERN = /^#{Dir.pwd}\/?/

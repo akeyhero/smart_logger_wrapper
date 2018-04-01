@@ -1,15 +1,19 @@
-class SmartLoggerWrapper
+require 'logger'
+
+class SmartLoggerWrapper < Logger
   module Options
     class ApplicationError < StandardError; end
 
-    # XXX: Be careful! This relies strongly on the implementation of this and the callers
-    APPLY_CALLER_STACK_DEPTH = 4
+    # XXX: Be careful! This relies strongly on the implementation of this class
+    APPLY_CALLER_STACK_DEPTH = 2
 
     module_function
 
-    def apply_all!(messages, options)
+    def apply_all!(messages, logger)
       [defined_appenders, defined_taggers, defined_redirectors].flatten.each do |option_key|
-        defined_options[option_key].apply!(messages, options[option_key]) if options.include?(option_key)
+        if logger.options.include?(option_key)
+          defined_options[option_key].apply!(messages, logger.options[option_key], logger)
+        end
       end
     end
 
