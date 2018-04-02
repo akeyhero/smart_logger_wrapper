@@ -5,6 +5,8 @@ require 'smart_logger_wrapper/options'
 class SmartLoggerWrapper < Logger
   include Logger::Severity
 
+  LOGGER_SHORTCUT_OFFSET = 3
+
   SEVERITY_MAPPING = {
     debug:   DEBUG,
     info:    INFO,
@@ -19,7 +21,7 @@ class SmartLoggerWrapper < Logger
   def initialize(logger = Logger.new(STDOUT), *loggers, **options)
     @loggers = [logger, *loggers].freeze
     @options = options.freeze
-    @offset = 3
+    @offset = LOGGER_SHORTCUT_OFFSET
     @_loggers_cache = {}
     @_loggers_with_offset_cache = {}
   end
