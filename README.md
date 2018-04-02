@@ -1,6 +1,6 @@
 # SmartLoggerWrapper
 
-SmartLoggerWrapper adds some useful features to the Ruby Logger or the compatibles. See Usage below to find out how it benefits your development.
+SmartLoggerWrapper adds some useful features to the Ruby Logger or its subclasses. See Usage below to find out how it benefits your development.
 
 [![Build Status](https://travis-ci.org/akeyhero/smart_logger_wrapper.svg?branch=master)](https://travis-ci.org/akeyhero/smart_logger_wrapper)
 
@@ -29,7 +29,7 @@ Wrap your logger with `SmartLoggerWrapper`, for example, in `config/environments
 +  config.logger = SmartLoggerWrapper(Logger.new('log/production.log', 'daily')).with_position
 ```
 
-Note that it is strongly recommended to use the wrapper for all environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
+Note that it is strongly recommended to use the wrapper for all kind of environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
 
 You may want to put log messages to `STDOUT` in your development environment. Then:
 
@@ -44,7 +44,9 @@ You may want to put log messages to `STDOUT` in your development environment. Th
 
 ### Basic
 
-Initialize with a Ruby `Logger` or an instance of the compatibles (e.g. `ActiveSupport::TaggedLogging`):
+This wrapper mainly modifies the behaviors of the following methods: `debug`, `info`, `warn`, `error`, `fatal`, and `unknown`.
+
+To use this wrapper, initialize with a Ruby `Logger` or an instance of its subclass:
 
 ```ruby
 require 'logger'
@@ -57,8 +59,6 @@ logger.info 'Call logging methods as usual.'
 # You can wrap multiple loggers
 logger2 = SmartLoggerWrapper.new(Logger.new('log/development.log'), Logger.new(STDOUT))
 ```
-
-The compatibles must respond to `#add` with the same arguments as `Logger#add`.
 
 ### Feature 1: Integrate multiple logger calls
 
