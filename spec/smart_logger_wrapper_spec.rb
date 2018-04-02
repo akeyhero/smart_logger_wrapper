@@ -130,7 +130,7 @@ RSpec.describe SmartLoggerWrapper do
       SmartLoggerWrapper::Options.define_appender :dummy_option, Class.new
     end
 
-    context 'without argument' do
+    context 'without an argument' do
       subject { smart_logger_wrapper.dummy_option }
 
       it { expect(subject.options).to include :dummy_option }
@@ -141,7 +141,7 @@ RSpec.describe SmartLoggerWrapper do
       end
     end
 
-    context 'without argument' do
+    context 'with an argument' do
       let(:dummy_arg) { double(:dummy_arg) }
 
       subject { smart_logger_wrapper.dummy_option(dummy_arg) }
