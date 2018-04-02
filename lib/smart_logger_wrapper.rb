@@ -90,8 +90,10 @@ class SmartLoggerWrapper < Logger
   def method_missing(method_name, *args, &block)
     if Options.defined_option?(method_name)
       # If there is an defined option with the same name as the method name, return a new logger with the option.
-      new_logger = @_loggers_cache[method_name] ||= clone.tap do |cloned|
-        cloned.overwrite_options(method_name => args.first)
+      arg = args.first
+      @_loggers_cache[method_name] = {} unless @_loggers_cache.include?(method_name)
+      new_logger = @_loggers_cache[method_name][arg] ||= clone.tap do |cloned|
+        cloned.overwrite_options(method_name => arg)
       end
       return block.(new_logger) if block_given?
       new_logger
