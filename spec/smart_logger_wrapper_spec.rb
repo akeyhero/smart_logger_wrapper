@@ -124,4 +124,34 @@ RSpec.describe SmartLoggerWrapper do
       it { is_expected.to be inspected_arg_stub }
     end
   end
+
+  describe 'private #method_missing' do
+    before do
+      SmartLoggerWrapper::Options.define_appender :dummy_option, Class.new
+    end
+
+    context 'without argument' do
+      subject { smart_logger_wrapper.dummy_option }
+
+      it { expect(subject.options).to include :dummy_option }
+      it { expect(subject.options[:dummy_option]).to be nil }
+
+      it 'should be cached' do
+        is_expected.to be smart_logger_wrapper.dummy_option
+      end
+    end
+
+    context 'without argument' do
+      let(:dummy_arg) { double(:dummy_arg) }
+
+      subject { smart_logger_wrapper.dummy_option(dummy_arg) }
+
+      it { expect(subject.options).to include :dummy_option }
+      it { expect(subject.options[:dummy_option]).to be dummy_arg }
+
+      it 'should be cached' do
+        is_expected.to be smart_logger_wrapper.dummy_option(dummy_arg)
+      end
+    end
+  end
 end
