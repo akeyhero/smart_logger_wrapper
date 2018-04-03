@@ -59,8 +59,12 @@ class SmartLoggerWrapper < Logger
     @options = options.merge(_options).freeze
   end
 
-  def format_message(*args)
-    loggers.first.send(:format_message, *args)
+  def format_severity(severity)
+    loggers.first.send(:format_severity, severity)
+  end
+
+  def format_message(severity, datetime, progname, msg)
+    loggers.first.send(:format_message, severity, datetime, progname, msg)
   end
 
   private

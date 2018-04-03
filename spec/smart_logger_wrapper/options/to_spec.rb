@@ -9,8 +9,9 @@ RSpec.describe SmartLoggerWrapper::Options::To do
   let(:severity) { SmartLoggerWrapper::SEVERITY_MAPPING[random_log_method] }
 
   let(:handler_stub) { double(:handler) }
+  let(:severity_label_stub) { double(:severity_label) }
   let(:formatter1_stub) { double(:formatter1) }
-  let(:formatter2_stub) { double(:formatter1) }
+  let(:formatter2_stub) { double(:formatter2) }
   let(:message1) { ('a'..'z').to_a.sample(10).join }
   let(:message2) { ('a'..'z').to_a.sample(10).join }
   let(:formatted_message1) { ('a'..'z').to_a.sample(10).join }
@@ -21,8 +22,9 @@ RSpec.describe SmartLoggerWrapper::Options::To do
       allow(logger1_stub).to receive(method_name)
       allow(logger2_stub).to receive(method_name)
     end
-    allow(logger1_stub).to receive(:format_message).with(severity, kind_of(Time), nil, message1).and_return formatted_message1
-    allow(logger1_stub).to receive(:format_message).with(severity, kind_of(Time), nil, message2).and_return formatted_message2
+    allow(logger1_stub).to receive(:format_severity).and_return severity_label_stub
+    allow(logger1_stub).to receive(:format_message).with(severity_label_stub, kind_of(Time), nil, message1).and_return formatted_message1
+    allow(logger1_stub).to receive(:format_message).with(severity_label_stub, kind_of(Time), nil, message2).and_return formatted_message2
     allow(logger2_stub).to receive(:format_message)
     allow(handler_stub).to receive(:puts)
   end

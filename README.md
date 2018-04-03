@@ -143,7 +143,8 @@ SmartLoggerWrapper::Options.define_redirector :to_messenger, Class.new(SmartLogg
   def apply!(messages, argument, severity, wrapper)
     channel = argument || 'general'
     time = Time.now
-    formatted_messages = messages.map { |message| wrapper.formatted_message(severity, time, nil, message) }
+    severity_label = wrapper.format_severity(severity)
+    formatted_messages = messages.map { |message| wrapper.formatted_message(severity_label, time, nil, message) }
     Thread.new do
       SomeMessenger.new(channel: channel).post(['```', *formatted_messages, '```'].join("\n"))
     end
