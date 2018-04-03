@@ -60,7 +60,7 @@ class SmartLoggerWrapper < Logger
   end
 
   def format_message(*args)
-    loggers.first.format_message(*args)
+    loggers.first.send(:format_message, *args)
   end
 
   private
