@@ -12,6 +12,6 @@ class SmartLoggerWrapper < Logger
       end
     end
 
-    define_redirector :to, To.new
+    define_redirector :to, To
   end
 end

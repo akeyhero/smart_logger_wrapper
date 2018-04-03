@@ -20,7 +20,7 @@ class SmartLoggerWrapper < Logger
     def define_option(option_name, option_object, defined_option_keys)
       key = option_name.to_sym
       defined_option_keys.push(key)
-      defined_options.merge!(key => option_object)
+      defined_options.merge!(key => option_object.new)
     end
 
     def define_appender(option_name, option_object)

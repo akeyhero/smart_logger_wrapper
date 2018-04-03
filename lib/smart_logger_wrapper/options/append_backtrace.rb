@@ -16,6 +16,6 @@ class SmartLoggerWrapper < Logger
       end
     end
 
-    define_appender :append_backtrace, AppendBacktrace.new
+    define_appender :append_backtrace, AppendBacktrace
   end
 end

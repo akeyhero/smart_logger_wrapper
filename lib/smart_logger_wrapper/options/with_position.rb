@@ -24,6 +24,6 @@ class SmartLoggerWrapper < Logger
       end
     end
 
-    define_tagger :with_position, WithPosition.new
+    define_tagger :with_position, WithPosition
   end
 end
