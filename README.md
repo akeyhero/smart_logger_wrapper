@@ -31,12 +31,12 @@ Wrap your logger with `SmartLoggerWrapper`, for example, in `config/environments
 
 Note that it is strongly recommended to use the wrapper for all kind of environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
 
-You may want to put log messages to `STDOUT` in your development environment. Then:
+You may want to put log messages to `STDERR` in your development environment. Then:
 
 ```ruby
   config.logger = SmartLoggerWrapper.new(
     SmartLoggerWrapper.new(Logger.new("log/development.log")).with_position,
-    ActiveSupport::Logger.new(STDOUT)
+    ActiveSupport::Logger.new(STDERR)
   )
 ```
 
@@ -139,19 +139,19 @@ For instance, in the case you want to integrate a messenger, such as Slack, in a
 `config/initializers/some_messenger_integration.rb`
 
 ```ruby
-class SomeMessengerIntegration < SmartLoggerWrapper::Options::Base
-  def apply!(messages, value, logger)
-    channel = value || 'general'
+SmartLoggerWrapper::Options.define_redirector :to_messenger, Class.new(SmartLoggerWrapper::Options::Base) do
+  def apply!(messages, argument, severity, wrapper)
+    channel = argument || 'general'
+    formatter = wrapper.formatter
+    formatted_messages = messages.map { |message| formatter.call(severity, time, nil, message) }
     Thread.new do
-      SomeMessenger.new(channel: channel).send("```\n#{messages.join("\n")}\n```")
+      SomeMessenger.new(channel: channel).post(['```', *formatted_messages, '```'].join("\n"))
     end
   end
 end
-
-SmartLoggerWrapper::Options.define_redirector :to_messenger, SomeMessengerIntegration.new
 ```
 
-Then, you can send messages as follows:
+Then, you can post log messages as follows:
 
 ```ruby
 Rails.logger.to_messenger('channel').error('foo')
