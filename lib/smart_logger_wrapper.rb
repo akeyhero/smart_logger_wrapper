@@ -28,11 +28,13 @@ class SmartLoggerWrapper < Logger
   end
 
   # For all methods with severity label, logger accepts multiple messages.
-  # The return value is the first logger's.
+  # The return value is the first one of the first logger's.
   SEVERITY_MAPPING.each do |severity_name, severity|
     define_method(severity_name) do |*args, &block|
       format_messages(*args, &block).map do |message|
-        add(severity, nil, message)
+        loggers.map do |logger|
+          logger.public_send(severity_name, message)
+        end.first
       end.first
     end
   end

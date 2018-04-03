@@ -5,13 +5,14 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
   let(:smart_logger_wrapper) { SmartLoggerWrapper.new(logger_stub) }
   let(:logger_stub) { double(:logger) }
   let(:random_log_method) { SmartLoggerWrapper::SEVERITY_MAPPING.keys.sample }
-  let(:severity) { SmartLoggerWrapper::SEVERITY_MAPPING[random_log_method] }
 
   let(:message) { ('a'..'z').to_a.sample(10).join }
   let(:filename) { File.basename(__FILE__) }
 
   before do
-    allow(logger_stub).to receive(:add)
+    SmartLoggerWrapper::SEVERITY_MAPPING.keys.each do |method_name|
+      allow(logger_stub).to receive(method_name)
+    end
   end
 
   def get_caller_line
@@ -24,11 +25,11 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
     subject! { smart_logger_wrapper.with_position.public_send(random_log_method, message) }
 
     it "logs with the caller's file name" do
-      expect(logger_stub).to have_received(:add).with(severity, nil, include("#{filename}:#{linenumber}"))
+      expect(logger_stub).to have_received(random_log_method).with(include("#{filename}:#{linenumber}"))
     end
 
     it 'logs with the original message' do
-      expect(logger_stub).to have_received(:add).with(severity, nil, include(message))
+      expect(logger_stub).to have_received(random_log_method).with(include(message))
     end
   end
 
@@ -36,7 +37,7 @@ RSpec.describe SmartLoggerWrapper::Options::WithPosition do
     subject! { smart_logger_wrapper.append_backtrace(false).public_send(random_log_method, message) }
 
     it 'logs just the original message' do
-      expect(logger_stub).to have_received(:add).with(severity, nil, message)
+      expect(logger_stub).to have_received(random_log_method).with(message)
     end
   end
 end

@@ -19,8 +19,11 @@ RSpec.describe SmartLoggerWrapper do
   let(:block_message_stub) { double(:block_message) }
 
   before do
-    allow(logger_stub).to receive(:add)
-    allow(another_logger_stub).to receive(:add)
+    ORIGINAL_LOGGER_METHODS.each do |method_name|
+      allow(logger_stub).to receive(method_name)
+      allow(another_logger_stub).to receive(method_name)
+    end
+
     allow(smart_logger_wrapper).to receive(:to_message).with(arg_stub).and_return(message_stub)
     allow(smart_logger_wrapper).to receive(:to_message).with(another_arg_stub).and_return(another_message_stub)
     allow(smart_logger_wrapper).to receive(:to_message).with(block_result_stub).and_return(block_message_stub)
@@ -34,9 +37,9 @@ RSpec.describe SmartLoggerWrapper do
     describe "##{method_name}" do
       subject! { smart_logger_wrapper.public_send(method_name, arg_stub, another_arg_stub, &block_stub) }
 
-      it { expect(logger_stub).to have_received(:add).with(severity, nil, message_stub).once }
-      it { expect(logger_stub).to have_received(:add).with(severity, nil, another_message_stub).once }
-      it { expect(logger_stub).to have_received(:add).with(severity, nil, block_message_stub).once }
+      it { expect(logger_stub).to have_received(method_name).with(message_stub).once }
+      it { expect(logger_stub).to have_received(method_name).with(another_message_stub).once }
+      it { expect(logger_stub).to have_received(method_name).with(block_message_stub).once }
     end
   end
 
@@ -53,8 +56,8 @@ RSpec.describe SmartLoggerWrapper do
     describe "##{method_name}" do
       subject! { smart_logger_wrapper.public_send(method_name, arg_stub) }
 
-      it { expect(logger_stub).to have_received(:add).with(severity, nil, message_stub).once }
-      it { expect(another_logger_stub).to have_received(:add).with(severity, nil, message_stub).once }
+      it { expect(logger_stub).to have_received(method_name).with(message_stub).once }
+      it { expect(another_logger_stub).to have_received(method_name).with(message_stub).once }
     end
   end
 
