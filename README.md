@@ -130,6 +130,49 @@ logger.append_backtrace.info 'A message'
 logger.append_backtrace(2).info 'A message'
 ```
 
+### Define your own options
+
+You can define a new option by your own.
+
+For instance, in the case you want to integrate a messenger, such as Slack, in a Rails app, you will define an initializer like this:
+
+`config/initializers/some_messenger_integration.rb`
+
+```ruby
+class SomeMessengerIntegration < SmartLoggerWrapper::Options::Base
+  def apply!(messages, value, logger)
+    channel = value || 'general'
+    Thread.new do
+      SomeMessenger.new(channel: channel).send("```\n#{messages.join("\n")}\n```")
+    end
+  end
+end
+
+SmartLoggerWrapper::Options.define_redirector :to_messenger, SomeMessengerIntegration.new
+```
+
+Then, you can send messages as follows:
+
+```ruby
+Rails.logger.to_messenger('channel').error('foo')
+```
+
+There are three categories for `SmartLoggerWrapper::Options`. Each option will be applied in the following order according to its category:
+
+#### 1. Tagger
+
+A tagger is expected to be used to tag each message. To define a tagger, you will call `SmartLoggerWrapper::Options.define_tagger`.
+
+#### 2. Appender
+
+An appender is expected to append some additinal information to the message list. To define an appender, you will call `SmartLoggerWrapper::Options.define_appender`.
+
+#### 3. Redirector
+
+A redirector should put messages to another location from the one where the wrapped logger specifies. To define a redirector, you will call `SmartLoggerWrapper::Options.define_redirector`.
+
+Indeed, these categories don't restrict how you implement your options. You can, for example, tag messages with a redirector in your responsibility.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/akeyhero/smart_logger_wrapper.
