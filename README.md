@@ -139,16 +139,16 @@ For instance, in the case you want to integrate a messenger, such as Slack, in a
 `config/initializers/some_messenger_integration.rb`
 
 ```ruby
-SmartLoggerWrapper::Options.define_redirector :to_messenger, Class.new(SmartLoggerWrapper::Options::Base) do
+SmartLoggerWrapper::Options.define_redirector :to_messenger, Class.new(SmartLoggerWrapper::Options::Base) {
   def apply!(messages, argument, severity, wrapper)
     channel = argument || 'general'
-    formatter = wrapper.formatter
-    formatted_messages = messages.map { |message| formatter.call(severity, time, nil, message) }
+    time = Time.now
+    formatted_messages = messages.map { |message| wrapper.formatted_message(severity, time, nil, message) }
     Thread.new do
       SomeMessenger.new(channel: channel).post(['```', *formatted_messages, '```'].join("\n"))
     end
   end
-end
+}
 ```
 
 Then, you can post log messages as follows:
