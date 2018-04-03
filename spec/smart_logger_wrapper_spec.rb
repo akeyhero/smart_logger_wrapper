@@ -3,7 +3,6 @@ require 'logger'
 
 RSpec.describe SmartLoggerWrapper do
   ORIGINAL_LOGGER_METHODS = %i(debug info warn error fatal unknown)
-  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=)
 
   let(:smart_logger_wrapper) { SmartLoggerWrapper.new(logger_stub) }
   let(:severity_stub) { double(:severity) }
@@ -86,7 +85,7 @@ RSpec.describe SmartLoggerWrapper do
     end
   end
 
-  (Logger.instance_methods(false) - SEVERITY_MAPPING.keys).each do |method_name|
+  (Logger.instance_methods(false) - ORIGINAL_LOGGER_METHODS).each do |method_name|
     it_behaves_like 'Delegation to the wrapped loggers', method_name
   end
 
