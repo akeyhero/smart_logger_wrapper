@@ -86,7 +86,7 @@ RSpec.describe SmartLoggerWrapper do
     end
   end
 
-  DELEGETING_METHODS.each do |method_name|
+  (Logger.instance_methods(false) - SEVERITY_MAPPING.keys).each do |method_name|
     it_behaves_like 'Delegation to the wrapped loggers', method_name
   end
 

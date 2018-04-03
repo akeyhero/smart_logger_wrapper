@@ -15,6 +15,7 @@ class SmartLoggerWrapper < Logger
     fatal:   FATAL,
     unknown: UNKNOWN
   }.freeze
+  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=)
 
   attr_reader :loggers, :options, :offset
 
@@ -38,7 +39,7 @@ class SmartLoggerWrapper < Logger
 
   # Aside from #debug, #info, etc., all Logger instance methods are called for all the wrapped loggers.
   # The return value is the first logger's.
-  (Logger.instance_methods(false) - SEVERITY_MAPPING.keys).each do |method_name|
+  DELEGETING_METHODS.each do |method_name|
     define_method(method_name) do |*args, &block|
       loggers.map do |logger|
         logger.public_send(method_name, *args, &block)
