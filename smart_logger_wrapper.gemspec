@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Akihiro Katsura"]
   spec.email         = ["info@kats.la"]
 
-  spec.summary       = %q{SmartLoggerWrapper adds some useful features to the Ruby Logger or the compatibles.}
-  # spec.description   = %q{SmartLoggerWrapper adds some useful features to the Ruby Logger or the compatibles.}
+  spec.summary       = %q{SmartLoggerWrapper adds some useful features to the Ruby Logger or a subclass.}
+  # spec.description   = %q{SmartLoggerWrapper adds some useful features to the Ruby Logger or a subclass.}
   spec.homepage      = "https://github.com/akeyhero/smart_logger_wrapper"
   spec.license       = "MIT"
 
