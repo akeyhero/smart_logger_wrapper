@@ -7,8 +7,7 @@ class SmartLoggerWrapper < Logger
       def apply!(messages, argument, severity, wrapper)
         raise ApplicationError, 'No handler given' if argument == nil
         time = Time.now
-        formatter = wrapper.formatter
-        argument.puts messages.map { |message| formatter.call(severity, time, nil, message) }.join("\n")
+        argument.puts messages.map { |message| wrapper.format_message(severity, time, nil, message) }.join("\n")
       rescue NoMethodError => e
         raise ApplicationError, e.message
       end

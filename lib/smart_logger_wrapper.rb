@@ -31,7 +31,7 @@ class SmartLoggerWrapper < Logger
   # The return value is the first one of the first logger's.
   SEVERITY_MAPPING.each do |severity_name, severity|
     define_method(severity_name) do |*args, &block|
-      format_messages(severity, *args, &block).map do |message|
+      build_messages(severity, *args, &block).map do |message|
         loggers.map do |logger|
           logger.public_send(severity_name, message)
         end.first
@@ -59,9 +59,13 @@ class SmartLoggerWrapper < Logger
     @options = options.merge(_options).freeze
   end
 
+  def format_message(*args)
+    loggers.first.format_message(*args)
+  end
+
   private
 
-  def format_messages(severity, *args, &block)
+  def build_messages(severity, *args, &block)
     messages = args.map { |arg| to_message(arg) }
     messages << to_message(block.call) if block_given?
     begin

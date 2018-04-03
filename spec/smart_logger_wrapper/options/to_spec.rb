@@ -6,6 +6,7 @@ RSpec.describe SmartLoggerWrapper::Options::To do
   let(:logger1_stub) { double(:logger1) }
   let(:logger2_stub) { double(:logger2) }
   let(:random_log_method) { SmartLoggerWrapper::SEVERITY_MAPPING.keys.sample }
+  let(:severity) { SmartLoggerWrapper::SEVERITY_MAPPING[random_log_method] }
 
   let(:handler_stub) { double(:handler) }
   let(:formatter1_stub) { double(:formatter1) }
@@ -20,11 +21,9 @@ RSpec.describe SmartLoggerWrapper::Options::To do
       allow(logger1_stub).to receive(method_name)
       allow(logger2_stub).to receive(method_name)
     end
-    allow(logger1_stub).to receive(:formatter).and_return formatter1_stub
-    allow(logger2_stub).to receive(:formatter).and_return formatter2_stub
-    allow(formatter1_stub).to receive(:call).with(anything, anything, anything, message1).and_return formatted_message1
-    allow(formatter1_stub).to receive(:call).with(anything, anything, anything, message2).and_return formatted_message2
-    allow(formatter2_stub).to receive(:call)
+    allow(logger1_stub).to receive(:format_message).with(severity, kind_of(Time), nil, message1).and_return formatted_message1
+    allow(logger1_stub).to receive(:format_message).with(severity, kind_of(Time), nil, message2).and_return formatted_message2
+    allow(logger2_stub).to receive(:format_message)
     allow(handler_stub).to receive(:puts)
   end
 
@@ -35,7 +34,7 @@ RSpec.describe SmartLoggerWrapper::Options::To do
       expect(handler_stub).to have_received(:puts).with([formatted_message1, formatted_message2].join("\n")).once
     end
 
-    it { expect(formatter2_stub).not_to have_received(:call) }
+    it { expect(logger2_stub).not_to have_received(:format_message) }
   end
 
   context 'with no handler' do
