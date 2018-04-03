@@ -7,15 +7,15 @@ class SmartLoggerWrapper < Logger
     class AppendBacktrace < Base
       include ::SmartLoggerWrapper::Utils::Backtrace
 
-      def apply!(messages, value, logger)
-        length = value.is_a?(Numeric) ? value : nil
+      def apply!(messages, argument, severity, wrapper)
+        length = argument.is_a?(Numeric) ? argument : nil
         messages << [
           'BACKTRACE:',
-          *get_backtrace(logger.offset + APPLY_CALLER_STACK_DEPTH + 1, length)
+          *get_backtrace(wrapper.offset + APPLY_CALLER_STACK_DEPTH + 1, length)
         ].join("\n")
       end
     end
 
-    define_appender :append_backtrace, AppendBacktrace.new
+    define_appender :append_backtrace, AppendBacktrace
   end
 end

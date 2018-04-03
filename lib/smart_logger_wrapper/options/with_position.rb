@@ -7,10 +7,10 @@ class SmartLoggerWrapper < Logger
     class WithPosition < Base
       include ::SmartLoggerWrapper::Utils::Path
 
-      def apply!(messages, value, logger)
-        return if value == false
+      def apply!(messages, argument, severity, wrapper)
+        return if argument == false
         # add 1 to `start` because this method dug the backtrace by 1
-        location = caller_locations(logger.offset + APPLY_CALLER_STACK_DEPTH + 1, 1)
+        location = caller_locations(wrapper.offset + APPLY_CALLER_STACK_DEPTH + 1, 1)
         prefix =
           if location && location.length > 0
             method_name = location[0].label
@@ -24,6 +24,6 @@ class SmartLoggerWrapper < Logger
       end
     end
 
-    define_tagger :with_position, WithPosition.new
+    define_tagger :with_position, WithPosition
   end
 end
