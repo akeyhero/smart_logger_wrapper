@@ -26,7 +26,7 @@ Wrap your logger with `SmartLoggerWrapper`, for example, in `config/environments
 
 ```diff
 -  config.logger = Logger.new('log/production.log', 'daily')
-+  config.logger = SmartLoggerWrapper(Logger.new('log/production.log', 'daily')).with_position
++  config.logger = SmartLoggerWrapper.new(Logger.new('log/production.log', 'daily')).with_position
 ```
 
 Note that it is strongly recommended to use the wrapper for all kind of environments so that you can avoid exceptions such as `NoMethodError` due to the unique features of this library.
@@ -158,17 +158,23 @@ Then, you can post log messages as follows:
 Rails.logger.to_messenger('channel').error('foo')
 ```
 
+#### Implementation
+
+Eash option is expected to be defined with a subclass of `SmartLoggerWrapper::Options::Base`. The class is required to respond to `#apply!` with the following arguments: `messages`, `argument`, `severity` and `wrapper`. Firstly, `messages` is an array of messages to be logged. In the case that you want to update the messages, you need to destructively update the array (because of its performance). Second, `argument` is the one which is passed as the option method argument. `severity` is an integer in response to `Logger::Severity`. Lastly, `wrapper` is the caller `SmartLoggerWrapper`.
+
+#### Option priority
+
 There are three categories for `SmartLoggerWrapper::Options`. Each option will be applied in the following order according to its category:
 
-#### 1. Tagger
+##### 1. Tagger
 
 A tagger is expected to be used to tag each message. To define a tagger, you will call `SmartLoggerWrapper::Options.define_tagger`.
 
-#### 2. Appender
+##### 2. Appender
 
 An appender is expected to append some additinal information to the message list. To define an appender, you will call `SmartLoggerWrapper::Options.define_appender`.
 
-#### 3. Redirector
+##### 3. Redirector
 
 A redirector should put messages to another location from the one where the wrapped logger specifies. To define a redirector, you will call `SmartLoggerWrapper::Options.define_redirector`.
 
