@@ -112,4 +112,8 @@ class SmartLoggerWrapper < Logger
       super
     end
   end
+
+  def respond_to_missing?(method_name, includes_private)
+    Options.defined_option?(method_name) || super
+  end
 end
