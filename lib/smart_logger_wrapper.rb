@@ -15,7 +15,7 @@ class SmartLoggerWrapper < Logger
     fatal:   FATAL,
     unknown: UNKNOWN
   }.freeze
-  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=)
+  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=).freeze
 
   attr_reader :loggers, :options, :offset
 
