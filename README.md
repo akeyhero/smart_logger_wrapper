@@ -140,8 +140,8 @@ For instance, in the case you want to integrate a messenger, such as Slack, in a
 
 ```ruby
 SmartLoggerWrapper::Options.define_redirector :to_messenger, Class.new(SmartLoggerWrapper::Options::Base) {
-  def apply!(messages, argument, severity, wrapper)
-    channel = argument || 'general'
+  def apply!(messages, arguments, severity, wrapper)
+    channel = arguments.first || 'general'
     time = Time.now
     severity_label = wrapper.format_severity(severity)
     formatted_messages = messages.map { |message| wrapper.format_message(severity_label, time, nil, message) }

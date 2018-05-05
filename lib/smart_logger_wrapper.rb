@@ -67,6 +67,11 @@ class SmartLoggerWrapper < Logger
     loggers.first.send(:format_message, severity, datetime, progname, msg)
   end
 
+  def with_option(option_name, *args)
+    new_options = options.merge(option_name => args)
+    self.class.new(*loggers, base_offset: base_offset, **new_options)
+  end
+
   private
 
   def build_messages(severity, *args, &block)
@@ -118,13 +123,8 @@ class SmartLoggerWrapper < Logger
     if root? && Options.defined_option?(method_name)
       # When the root wrapper receive an defined option with the same name as the method name,
       # return a new logger wrapper with the option.
-      arg = args.first
       @_loggers_cache[method_name] = {} unless @_loggers_cache.include?(method_name)
-      logger_with_option = @_loggers_cache[method_name][arg] ||= self.class.new(
-        *loggers,
-        base_offset: base_offset,
-        **options.merge(method_name => arg)
-      )
+      logger_with_option = @_loggers_cache[method_name][args] ||= with_option(method_name, *args)
       return block.(logger_with_option) if block_given?
       logger_with_option
     else
