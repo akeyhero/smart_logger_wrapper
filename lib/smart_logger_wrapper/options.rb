@@ -9,10 +9,10 @@ class SmartLoggerWrapper < Logger
 
     module_function
 
-    def apply_all!(messages, severity, logger)
+    def apply_all!(messages, severity, wrapper)
       [defined_appenders, defined_taggers, defined_redirectors].flatten.each do |option_key|
-        if logger.options.include?(option_key)
-          defined_options[option_key].apply!(messages, logger.options[option_key], severity, logger)
+        if wrapper.options.include?(option_key)
+          defined_options[option_key].apply!(messages, wrapper.options[option_key], severity, wrapper)
         end
       end
     end

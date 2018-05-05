@@ -5,7 +5,8 @@ require 'smart_logger_wrapper/options'
 class SmartLoggerWrapper < Logger
   include Logger::Severity
 
-  LOGGER_SHORTCUT_OFFSET = 3
+  BASE_OFFSET = 3
+  NESTED_WRAPPER_OFFSET = 6
 
   SEVERITY_MAPPING = {
     debug:   DEBUG,
@@ -15,16 +16,16 @@ class SmartLoggerWrapper < Logger
     fatal:   FATAL,
     unknown: UNKNOWN
   }.freeze
-  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=)
+  DELEGETING_METHODS = %i(<< reopen close log add level debug? level= progname datetime_format= datetime_format formatter sev_threshold sev_threshold= info? warn? error? fatal? progname= formatter=).freeze
 
-  attr_reader :loggers, :options, :offset
+  attr_reader :loggers, :options, :base_offset, :parent
 
-  def initialize(logger = Logger.new(STDOUT), *loggers, **options)
-    @loggers = [logger, *loggers].freeze
+  def initialize(logger = Logger.new(STDOUT), *loggers, base_offset: nil, parent: nil, **options)
+    @base_offset = base_offset || BASE_OFFSET
+    @parent = parent
+    @loggers = be_parent_of!(logger, *loggers).freeze
     @options = options.freeze
-    @offset = LOGGER_SHORTCUT_OFFSET
     @_loggers_cache = {}
-    @_loggers_with_offset_cache = {}
   end
 
   # For all methods with severity label, logger accepts multiple messages.
@@ -49,14 +50,13 @@ class SmartLoggerWrapper < Logger
     end
   end
 
-  def with_offset(_offset)
-    @_loggers_with_offset_cache[_offset] ||= clone.tap do |logger_with_offset|
-      logger_with_offset.instance_variable_set(:@offset, _offset)
-    end
+  def offset
+    @base_offset + depth * NESTED_WRAPPER_OFFSET
   end
 
-  def overwrite_options(_options)
-    @options = options.merge(_options).freeze
+  def depth
+    return 0 if root?
+    parent.depth + 1
   end
 
   def format_severity(severity)
@@ -98,22 +98,41 @@ class SmartLoggerWrapper < Logger
     end
   end
 
+  def set_parent!(new_parent)
+    @_loggers_cache.clear if new_parent != nil
+    @parent = new_parent == self ? nil : new_parent # to avoid stack overflow at #depth
+  end
+
+  def be_parent_of!(*loggers)
+    loggers.each do |logger|
+      # XXX: Calling a private method because it is an internal procedure
+      logger.is_a?(SmartLoggerWrapper) ? logger.send(:set_parent!, self) : logger
+    end
+  end
+
+  def root?
+    parent == nil
+  end
+
   def method_missing(method_name, *args, &block)
-    if Options.defined_option?(method_name)
-      # If there is an defined option with the same name as the method name, return a new logger with the option.
+    if root? && Options.defined_option?(method_name)
+      # When the root wrapper receive an defined option with the same name as the method name,
+      # return a new logger wrapper with the option.
       arg = args.first
       @_loggers_cache[method_name] = {} unless @_loggers_cache.include?(method_name)
-      new_logger = @_loggers_cache[method_name][arg] ||= clone.tap do |cloned|
-        cloned.overwrite_options(method_name => arg)
-      end
-      return block.(new_logger) if block_given?
-      new_logger
+      logger_with_option = @_loggers_cache[method_name][arg] ||= self.class.new(
+        *loggers,
+        base_offset: base_offset,
+        **options.merge(method_name => arg)
+      )
+      return block.(logger_with_option) if block_given?
+      logger_with_option
     else
       super
     end
   end
 
   def respond_to_missing?(method_name, includes_private)
-    Options.defined_option?(method_name) || super
+    root? && Options.defined_option?(method_name) || super
   end
 end
