@@ -8,7 +8,7 @@ class SmartLoggerWrapper < Logger
 
       def get_backtrace(start, length = nil)
         # add 1 to `start` because this method dug the backtrace by 1
-        backtrace = clean_backtrace(caller_locations(start + 1).map(&:to_s))
+        backtrace = clean_backtrace(caller(start + 1))
         length == nil ? backtrace.to_a : backtrace.first(length)
       end
 
