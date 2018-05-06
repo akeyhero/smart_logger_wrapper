@@ -121,7 +121,7 @@ class SmartLoggerWrapper < Logger
 
   def method_missing(method_name, *args, &block)
     if root? && Options.defined_option?(method_name)
-      # When the root wrapper receive an defined option with the same name as the method name,
+      # When a root wrapper receives an defined option with the same name as the method name,
       # return a new logger wrapper with the option.
       @_loggers_cache[method_name] = {} unless @_loggers_cache.include?(method_name)
       logger_with_option = @_loggers_cache[method_name][args] ||= with_option(method_name, *args)
