@@ -1,10 +1,19 @@
 require "bundler/setup"
 require 'simplecov'
 require 'coveralls'
-require "smart_logger_wrapper"
 
 Coveralls.wear!
-SimpleCov.start
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+SimpleCov.start do
+  add_filter "/spec/"
+  track_files "lib/**/*.rb"
+end
+
+require "smart_logger_wrapper"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
