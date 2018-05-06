@@ -1,5 +1,8 @@
 require "bundler/setup"
+require 'simplecov'
 require "smart_logger_wrapper"
+
+SimpleCov.start
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
