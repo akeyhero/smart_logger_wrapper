@@ -69,7 +69,7 @@ class SmartLoggerWrapper < Logger
 
   def with_option(option_name, *args)
     new_options = options.merge(option_name => args)
-    self.class.new(*loggers, base_offset: base_offset, **new_options)
+    self.class.new(*loggers, base_offset: base_offset, parent: parent, **new_options)
   end
 
   private
