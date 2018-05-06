@@ -3,6 +3,7 @@
 SmartLoggerWrapper adds some useful features to the Ruby Logger or its subclasses. See Usage below to find out how it benefits your development.
 
 [![Build Status](https://travis-ci.org/akeyhero/smart_logger_wrapper.svg?branch=master)](https://travis-ci.org/akeyhero/smart_logger_wrapper)
+[![Coverage Status](https://coveralls.io/repos/github/akeyhero/smart_logger_wrapper/badge.svg?branch=master)](https://coveralls.io/github/akeyhero/smart_logger_wrapper?branch=master)
 
 ## Installation
 
