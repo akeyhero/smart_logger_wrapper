@@ -1,7 +1,9 @@
 require "bundler/setup"
 require 'simplecov'
+require 'coveralls'
 require "smart_logger_wrapper"
 
+Coveralls.wear!
 SimpleCov.start
 
 RSpec.configure do |config|
