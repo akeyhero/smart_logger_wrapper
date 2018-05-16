@@ -29,7 +29,7 @@ class SmartLoggerWrapper < Logger
       private
 
       def location_important?(location)
-        ! clean_backtrace(location.map(&:to_s)).empty?
+        ! clean_backtrace(location.map(&:to_s), keeps_first: false).empty?
       end
     end
 

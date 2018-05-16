@@ -12,11 +12,15 @@ class SmartLoggerWrapper < Logger
         length == nil ? backtrace.to_a : backtrace.first(length)
       end
 
-      def clean_backtrace(backtrace)
+      def clean_backtrace(backtrace, keeps_first: true)
         (
           if defined?(::Rails) && ::Rails.respond_to?(:backtrace_cleaner)
-            head, *tail = backtrace
-            [head] + Rails.backtrace_cleaner.filter(tail)
+            if keeps_first
+              head, *tail = backtrace
+              [head] + Rails.backtrace_cleaner.filter(tail)
+            else
+              Rails.backtrace_cleaner.filter(backtrace)
+            end
           else
             backtrace
           end
